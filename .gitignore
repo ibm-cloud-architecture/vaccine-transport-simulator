@@ -1,3 +1,4 @@
 
 .odo/env
+/target
 .odo/odo-file-index.json
