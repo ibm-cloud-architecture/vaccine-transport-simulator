@@ -1,0 +1,218 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    app.quarkus.io/build-timestamp: 2020-12-20 - 00:12:41 +0000
+    app.openshift.io/vcs-url: <<unknown>>
+  labels:
+    app.kubernetes.io/version: 1.0-SNAPSHOT
+    app.kubernetes.io/name: vaccine-transport-simulator
+    app: vaccinetransport
+    app.openshift.io/runtime: quarkus
+  name: vaccine-transport-simulator
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    app.quarkus.io/build-timestamp: 2020-12-20 - 00:12:41 +0000
+    app.openshift.io/vcs-url: <<unknown>>
+  labels:
+    app.kubernetes.io/name: vaccine-transport-simulator
+    app.kubernetes.io/version: 1.0-SNAPSHOT
+    app: vaccinetransport
+    app.openshift.io/runtime: quarkus
+  name: vaccine-transport-simulator
+spec:
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  selector:
+    app.kubernetes.io/name: vaccine-transport-simulator
+    app.kubernetes.io/version: 1.0-SNAPSHOT
+  type: ClusterIP
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: vaccine-transport-simulator-view
+roleRef:
+  kind: ClusterRole
+  apiGroup: rbac.authorization.k8s.io
+  name: view
+subjects:
+- kind: ServiceAccount
+  name: vaccine-transport-simulator
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  name: openjdk-11
+spec:
+  dockerImageRepository: registry.access.redhat.com/ubi8/openjdk-11
+---
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  annotations:
+    app.quarkus.io/build-timestamp: 2020-12-20 - 00:12:41 +0000
+    app.openshift.io/vcs-url: <<unknown>>
+  labels:
+    app.kubernetes.io/version: 1.0-SNAPSHOT
+    app.kubernetes.io/name: vaccine-transport-simulator
+    app: vaccinetransport
+    app.openshift.io/runtime: quarkus
+  name: vaccine-transport-simulator
+spec: {}
+---
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  annotations:
+    app.quarkus.io/build-timestamp: 2020-12-20 - 00:12:41 +0000
+    app.openshift.io/vcs-url: <<unknown>>
+  labels:
+    app.kubernetes.io/version: 1.0-SNAPSHOT
+    app.kubernetes.io/name: vaccine-transport-simulator
+    app: vaccinetransport
+    app.openshift.io/runtime: quarkus
+  name: vaccine-transport-simulator
+spec:
+  output:
+    to:
+      kind: ImageStreamTag
+      name: vaccine-transport-simulator:1.0-SNAPSHOT
+  source:
+    binary: {}
+  strategy:
+    sourceStrategy:
+      from:
+        kind: ImageStreamTag
+        name: openjdk-11:latest
+---
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  annotations:
+    app.quarkus.io/build-timestamp: 2020-12-20 - 00:12:41 +0000
+    app.openshift.io/vcs-url: <<unknown>>
+  labels:
+    app.kubernetes.io/version: 1.0-SNAPSHOT
+    app.kubernetes.io/name: vaccine-transport-simulator
+    app: vaccinetransport
+    app.openshift.io/runtime: quarkus
+  name: vaccine-transport-simulator
+spec:
+  replicas: 1
+  selector:
+    app.kubernetes.io/name: vaccine-transport-simulator
+    app.kubernetes.io/version: 1.0-SNAPSHOT
+  template:
+    metadata:
+      annotations:
+        app.quarkus.io/build-timestamp: 2020-12-20 - 00:12:41 +0000
+        app.openshift.io/vcs-url: <<unknown>>
+      labels:
+        app.kubernetes.io/version: 1.0-SNAPSHOT
+        app.kubernetes.io/name: vaccine-transport-simulator
+        app: vaccinetransport
+        app.openshift.io/runtime: quarkus
+    spec:
+      containers:
+      - args:
+        - -jar
+        - /deployments/target/vaccine-transport-simulator-1.0-SNAPSHOT-runner.jar
+        - -cp
+        - /deployments/target/lib/io.quarkus.quarkus-security-runtime-spi-1.10.2.Final.jar:/deployments/target/lib/io.quarkus.security.quarkus-security-1.1.3.Final.jar:/deployments/target/lib/io.netty.netty-codec-4.1.49.Final.jar:/deployments/target/lib/io.quarkus.quarkus-netty-1.10.2.Final.jar:/deployments/target/lib/io.quarkus.quarkus-vertx-core-1.10.2.Final.jar:/deployments/target/lib/io.vertx.vertx-web-common-3.9.4.jar:/deployments/target/lib/io.vertx.vertx-auth-common-3.9.4.jar:/deployments/target/lib/io.vertx.vertx-bridge-common-3.9.4.jar:/deployments/target/lib/io.vertx.vertx-web-3.9.4.jar:/deployments/target/lib/io.quarkus.quarkus-vertx-http-1.10.2.Final.jar:/deployments/target/lib/org.jboss.spec.javax.ws.rs.jboss-jaxrs-api_2.1_spec-2.0.1.Final.jar:/deployments/target/lib/org.jboss.resteasy.resteasy-core-spi-4.5.8.Final.jar:/deployments/target/lib/com.ibm.async.asyncutil-0.1.0.jar:/deployments/target/lib/org.jboss.resteasy.resteasy-core-4.5.8.Final.jar:/deployments/target/lib/com.sun.activation.jakarta.activation-1.2.1.jar:/deployments/target/lib/io.quarkus.quarkus-resteasy-common-1.10.2.Final.jar:/deployments/target/lib/jakarta.validation.jakarta.validation-api-2.0.2.jar:/deployments/target/lib/io.quarkus.quarkus-resteasy-server-common-1.10.2.Final.jar:/deployments/target/lib/io.quarkus.quarkus-resteasy-1.10.2.Final.jar:/deployments/target/lib/com.fasterxml.jackson.core.jackson-databind-2.11.3.jar:/deployments/target/lib/com.fasterxml.jackson.datatype.jackson-datatype-jsr310-2.11.3.jar:/deployments/target/lib/com.fasterxml.jackson.datatype.jackson-datatype-jdk8-2.11.3.jar:/deployments/target/lib/com.fasterxml.jackson.module.jackson-module-parameter-names-2.11.3.jar:/deployments/target/lib/io.quarkus.quarkus-jackson-1.10.2.Final.jar:/deployments/target/lib/org.glassfish.jaxb.txw2-2.3.3-b02.jar:/deployments/target/lib/com.sun.istack.istack-commons-runtime-3.0.10.jar:/deployments/target/lib/org.glassfish.jaxb.jaxb-runtime-2.3.3-b02.jar:/deployments/target/lib/org.jboss.resteasy.resteasy-jaxb-provider-4.5.8.Final.jar:/deployments/target/lib/com.fasterxml.jackson.core.jackson-core-2.11.3.jar:/deployments/target/lib/com.fasterxml.jackson.core.jackson-annotations-2.11.3.jar:/deployments/target/lib/com.fasterxml.jackson.jaxrs.jackson-jaxrs-base-2.11.3.jar:/deployments/target/lib/jakarta.activation.jakarta.activation-api-1.2.1.jar:/deployments/target/lib/com.fasterxml.jackson.module.jackson-module-jaxb-annotations-2.11.3.jar:/deployments/target/lib/com.fasterxml.jackson.jaxrs.jackson-jaxrs-json-provider-2.11.3.jar:/deployments/target/lib/com.github.java-json-tools.btf-1.3.jar:/deployments/target/lib/com.github.java-json-tools.msg-simple-1.2.jar:/deployments/target/lib/com.github.java-json-tools.jackson-coreutils-2.0.jar:/deployments/target/lib/com.github.java-json-tools.json-patch-1.13.jar:/deployments/target/lib/org.jboss.logging.jboss-logging-3.4.1.Final.jar:/deployments/target/lib/org.jboss.resteasy.resteasy-jackson2-provider-4.5.8.Final.jar:/deployments/target/lib/org.jboss.spec.javax.xml.bind.jboss-jaxb-api_2.3_spec-2.0.0.Final.jar:/deployments/target/lib/io.quarkus.quarkus-resteasy-jackson-1.10.2.Final.jar:/deployments/target/lib/org.eclipse.microprofile.health.microprofile-health-api-2.2.jar:/deployments/target/lib/io.smallrye.smallrye-health-api-2.2.5.jar:/deployments/target/lib/io.smallrye.smallrye-health-2.2.5.jar:/deployments/target/lib/io.smallrye.smallrye-health-ui-2.2.5.jar:/deployments/target/lib/io.smallrye.smallrye-health-provided-checks-2.2.5.jar:/deployments/target/lib/jakarta.el.jakarta.el-api-3.0.3.jar:/deployments/target/lib/jakarta.interceptor.jakarta.interceptor-api-1.2.5.jar:/deployments/target/lib/jakarta.enterprise.jakarta.enterprise.cdi-api-2.0.2.jar:/deployments/target/lib/jakarta.inject.jakarta.inject-api-1.0.jar:/deployments/target/lib/io.quarkus.quarkus-development-mode-spi-1.10.2.Final.jar:/deployments/target/lib/io.smallrye.config.smallrye-config-common-1.9.3.jar:/deployments/target/lib/io.smallrye.common.smallrye-common-function-1.4.1.jar:/deployments/target/lib/io.smallrye.common.smallrye-common-expression-1.4.1.jar:/deployments/target/lib/io.smallrye.common.smallrye-common-constraint-1.4.1.jar:/deployments/target/lib/io.smallrye.common.smallrye-common-classloader-1.4.1.jar:/deployments/target/lib/org.ow2.asm.asm-9.0.jar:/deployments/target/lib/io.smallrye.config.smallrye-config-1.9.3.jar:/deployments/target/lib/org.jboss.logmanager.jboss-logmanager-embedded-1.0.6.jar:/deployments/target/lib/org.jboss.logging.jboss-logging-annotations-2.1.0.Final.jar:/deployments/target/lib/org.jboss.threads.jboss-threads-3.1.1.Final.jar:/deployments/target/lib/org.slf4j.slf4j-api-1.7.30.jar:/deployments/target/lib/org.jboss.slf4j.slf4j-jboss-logmanager-1.1.0.Final.jar:/deployments/target/lib/org.graalvm.sdk.graal-sdk-20.2.0.jar:/deployments/target/lib/org.wildfly.common.wildfly-common-1.5.4.Final-format-001.jar:/deployments/target/lib/io.smallrye.common.smallrye-common-io-1.4.1.jar:/deployments/target/lib/io.quarkus.quarkus-bootstrap-runner-1.10.2.Final.jar:/deployments/target/lib/io.quarkus.quarkus-core-1.10.2.Final.jar:/deployments/target/lib/org.glassfish.jakarta.json-1.1.6.jar:/deployments/target/lib/io.quarkus.quarkus-jsonp-1.10.2.Final.jar:/deployments/target/lib/io.quarkus.quarkus-smallrye-health-1.10.2.Final.jar:/deployments/target/lib/org.eclipse.microprofile.openapi.microprofile-openapi-api-1.1.2.jar:/deployments/target/lib/org.eclipse.microprofile.config.microprofile-config-api-1.4.jar:/deployments/target/lib/org.yaml.snakeyaml-1.27.jar:/deployments/target/lib/com.fasterxml.jackson.dataformat.jackson-dataformat-yaml-2.11.3.jar:/deployments/target/lib/org.jboss.jandex-2.2.1.Final.jar:/deployments/target/lib/io.smallrye.smallrye-open-api-core-2.0.15.jar:/deployments/target/lib/jakarta.transaction.jakarta.transaction-api-1.3.3.jar:/deployments/target/lib/io.quarkus.arc.arc-1.10.2.Final.jar:/deployments/target/lib/org.eclipse.microprofile.context-propagation.microprofile-context-propagation-api-1.0.1.jar:/deployments/target/lib/io.quarkus.quarkus-arc-1.10.2.Final.jar:/deployments/target/lib/io.quarkus.quarkus-swagger-ui-1.10.2.Final.jar:/deployments/target/lib/io.quarkus.quarkus-smallrye-openapi-1.10.2.Final.jar:/deployments/target/lib/io.quarkus.quarkus-kafka-client-1.10.2.Final.jar:/deployments/target/lib/org.apache.zookeeper.zookeeper-jute-3.5.7.jar:/deployments/target/lib/org.apache.yetus.audience-annotations-0.5.0.jar:/deployments/target/lib/io.netty.netty-transport-native-unix-common-4.1.49.Final.jar:/deployments/target/lib/io.netty.netty-transport-native-epoll-4.1.49.Final.jar:/deployments/target/lib/org.apache.zookeeper.zookeeper-3.5.7.jar:/deployments/target/lib/io.smallrye.reactive.smallrye-mutiny-vertx-kafka-client-1.2.2.jar:/deployments/target/lib/io.grpc.grpc-context-1.32.1.jar:/deployments/target/lib/io.opentelemetry.opentelemetry-context-prop-0.9.1.jar:/deployments/target/lib/io.opentelemetry.opentelemetry-api-0.9.1.jar:/deployments/target/lib/org.reactivestreams.reactive-streams-1.0.3.jar:/deployments/target/lib/io.smallrye.reactive.smallrye-reactive-converter-api-1.2.2.jar:/deployments/target/lib/io.smallrye.reactive.mutiny-0.11.0.jar:/deployments/target/lib/io.smallrye.reactive.smallrye-reactive-messaging-kafka-2.5.0.jar:/deployments/target/lib/com.github.luben.zstd-jni-1.4.4-7.jar:/deployments/target/lib/org.lz4.lz4-java-1.7.1.jar:/deployments/target/lib/org.xerial.snappy.snappy-java-1.1.7.3.jar:/deployments/target/lib/org.apache.kafka.kafka-clients-2.5.0.jar:/deployments/target/lib/io.netty.netty-common-4.1.49.Final.jar:/deployments/target/lib/io.netty.netty-buffer-4.1.49.Final.jar:/deployments/target/lib/io.netty.netty-transport-4.1.49.Final.jar:/deployments/target/lib/io.netty.netty-handler-4.1.49.Final.jar:/deployments/target/lib/io.netty.netty-codec-socks-4.1.49.Final.jar:/deployments/target/lib/io.netty.netty-handler-proxy-4.1.49.Final.jar:/deployments/target/lib/io.netty.netty-codec-http-4.1.49.Final.jar:/deployments/target/lib/io.netty.netty-codec-http2-4.1.49.Final.jar:/deployments/target/lib/io.netty.netty-resolver-4.1.49.Final.jar:/deployments/target/lib/io.netty.netty-codec-dns-4.1.49.Final.jar:/deployments/target/lib/io.netty.netty-resolver-dns-4.1.49.Final.jar:/deployments/target/lib/io.vertx.vertx-core-3.9.4.jar:/deployments/target/lib/io.vertx.vertx-kafka-client-3.9.4.jar:/deployments/target/lib/org.eclipse.microprofile.reactive-streams-operators.microprofile-reactive-streams-operators-api-1.0.1.jar:/deployments/target/lib/org.eclipse.microprofile.reactive-streams-operators.microprofile-reactive-streams-operators-core-1.0.1.jar:/deployments/target/lib/io.quarkus.quarkus-mutiny-1.10.2.Final.jar:/deployments/target/lib/io.smallrye.reactive.mutiny-reactive-streams-operators-0.11.0.jar:/deployments/target/lib/io.smallrye.reactive.mutiny-context-propagation-0.11.0.jar:/deployments/target/lib/io.smallrye.smallrye-context-propagation-api-1.0.19.jar:/deployments/target/lib/io.smallrye.smallrye-context-propagation-1.0.19.jar:/deployments/target/lib/io.quarkus.quarkus-smallrye-context-propagation-1.10.2.Final.jar:/deployments/target/lib/io.quarkus.quarkus-mutiny-reactive-streams-operators-1.10.2.Final.jar:/deployments/target/lib/io.reactivex.rxjava2.rxjava-2.2.20.jar:/deployments/target/lib/io.smallrye.reactive.smallrye-axle-generator-1.2.2.jar:/deployments/target/lib/io.smallrye.reactive.smallrye-axle-core-1.2.2.jar:/deployments/target/lib/io.vertx.vertx-rx-gen-3.9.4.jar:/deployments/target/lib/io.vertx.vertx-rx-java2-3.9.4.jar:/deployments/target/lib/io.quarkus.quarkus-vertx-1.10.2.Final.jar:/deployments/target/lib/io.smallrye.common.smallrye-common-annotation-1.4.1.jar:/deployments/target/lib/io.smallrye.reactive.smallrye-reactive-messaging-health-2.5.0.jar:/deployments/target/lib/io.quarkus.quarkus-smallrye-reactive-messaging-1.10.2.Final.jar:/deployments/target/lib/io.smallrye.reactive.smallrye-reactive-messaging-api-2.5.0.jar:/deployments/target/lib/io.smallrye.reactive.smallrye-mutiny-vertx-runtime-1.2.2.jar:/deployments/target/lib/org.mvel.mvel2-2.3.1.Final.jar:/deployments/target/lib/io.vertx.vertx-codegen-3.9.4.jar:/deployments/target/lib/io.smallrye.reactive.vertx-mutiny-generator-1.2.2.jar:/deployments/target/lib/io.smallrye.reactive.smallrye-mutiny-vertx-core-1.2.2.jar:/deployments/target/lib/io.smallrye.reactive.smallrye-reactive-messaging-provider-2.5.0.jar:/deployments/target/lib/jakarta.annotation.jakarta.annotation-api-1.3.5.jar:/deployments/target/lib/io.quarkus.quarkus-smallrye-reactive-messaging-kafka-1.10.2.Final.jar:/deployments/target/lib/io.fabric8.kubernetes-model-common-4.12.0.jar:/deployments/target/lib/io.fabric8.kubernetes-model-core-4.12.0.jar:/deployments/target/lib/io.fabric8.kubernetes-model-rbac-4.12.0.jar:/deployments/target/lib/io.fabric8.kubernetes-model-admissionregistration-4.12.0.jar:/deployments/target/lib/io.fabric8.kubernetes-model-apps-4.12.0.jar:/deployments/target/lib/io.fabric8.kubernetes-model-autoscaling-4.12.0.jar:/deployments/target/lib/io.fabric8.kubernetes-model-apiextensions-4.12.0.jar:/deployments/target/lib/io.fabric8.kubernetes-model-batch-4.12.0.jar:/deployments/target/lib/io.fabric8.kubernetes-model-certificates-4.12.0.jar:/deployments/target/lib/io.fabric8.kubernetes-model-coordination-4.12.0.jar:/deployments/target/lib/io.fabric8.kubernetes-model-discovery-4.12.0.jar:/deployments/target/lib/io.fabric8.kubernetes-model-events-4.12.0.jar:/deployments/target/lib/io.fabric8.kubernetes-model-extensions-4.12.0.jar:/deployments/target/lib/io.fabric8.kubernetes-model-networking-4.12.0.jar:/deployments/target/lib/io.fabric8.kubernetes-model-metrics-4.12.0.jar:/deployments/target/lib/io.fabric8.kubernetes-model-policy-4.12.0.jar:/deployments/target/lib/io.fabric8.kubernetes-model-scheduling-4.12.0.jar:/deployments/target/lib/io.fabric8.kubernetes-model-settings-4.12.0.jar:/deployments/target/lib/io.fabric8.kubernetes-model-storageclass-4.12.0.jar:/deployments/target/lib/com.squareup.okio.okio-1.17.2.jar:/deployments/target/lib/com.squareup.okhttp3.okhttp-3.14.9.jar:/deployments/target/lib/com.squareup.okhttp3.logging-interceptor-3.14.9.jar:/deployments/target/lib/io.fabric8.zjsonpatch-0.3.0.jar:/deployments/target/lib/dk.brics.automaton.automaton-1.11-8.jar:/deployments/target/lib/com.github.mifmif.generex-1.0.2.jar:/deployments/target/lib/io.fabric8.kubernetes-client-4.12.0.jar:/deployments/target/lib/org.apache.commons.commons-compress-1.20.jar:/deployments/target/lib/io.smallrye.config.smallrye-config-source-yaml-1.9.3.jar:/deployments/target/lib/io.quarkus.quarkus-kubernetes-client-1.10.2.Final.jar:/deployments/target/lib/io.quarkus.quarkus-kubernetes-config-1.10.2.Final.jar:/deployments/target/lib/io.quarkus.quarkus-kubernetes-client-internal-1.10.2.Final.jar:/deployments/target/lib/io.quarkus.quarkus-openshift-1.10.2.Final.jar
+        - -Dquarkus.http.host=0.0.0.0
+        - -Djava.util.logging.manager=org.jboss.logmanager.LogManager
+        command:
+        - java
+        env:
+        - name: KUBERNETES_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: KAFKA_SSL_TRUSTSTORE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: ca.password
+              name: light-es-cluster-ca-cert
+        - name: JAVA_APP_JAR
+          value: /deployments/target/vaccine-transport-simulator-1.0-SNAPSHOT-runner.jar
+        - name: JAVA_LIB_DIR
+          value: /deployments/target/lib
+        envFrom:
+        - configMapRef:
+            name: vaccine-transport-cm
+        image: image-registry.openshift-image-registry.svc:5000/vaccine/vaccine-transport-simulator:1.0-SNAPSHOT
+        imagePullPolicy: IfNotPresent
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health/live
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 0
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 10
+        name: vaccine-transport-simulator
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /health/ready
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 0
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 10
+        volumeMounts:
+        - mountPath: /deployments/certs/server
+          name: es-cert
+          readOnly: false
+          subPath: ""
+      serviceAccount: vaccine-transport-simulator
+      volumes:
+      - name: es-cert
+        secret:
+          defaultMode: 384
+          optional: false
+          secretName: light-es-cluster-ca-cert
+  triggers:
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - vaccine-transport-simulator
+      from:
+        kind: ImageStreamTag
+        name: vaccine-transport-simulator:1.0-SNAPSHOT
+    type: ImageChange
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  annotations:
+    app.quarkus.io/build-timestamp: 2020-12-20 - 00:12:41 +0000
+    app.openshift.io/vcs-url: <<unknown>>
+  labels:
+    app.kubernetes.io/name: vaccine-transport-simulator
+    app.kubernetes.io/version: 1.0-SNAPSHOT
+    app: vaccinetransport
+    app.openshift.io/runtime: quarkus
+  name: vaccine-transport-simulator
+spec:
+  host: ""
+  path: /
+  port:
+    targetPort: 8080
+  to:
+    kind: Service
+    name: vaccine-transport-simulator

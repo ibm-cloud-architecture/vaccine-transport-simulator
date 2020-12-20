@@ -1,0 +1,62 @@
+schemaVersion: 2.0.0
+metadata:
+  name: java-quarkus
+  version: 1.1.0
+starterProjects:
+- name: quarkus-ex
+  git:
+    remotes:
+      origin: https://github.com/odo-devfiles/quarkus-ex
+components:
+- name: tools
+  container:
+    endpoints:
+    - name: 8080-http
+      targetPort: 8080
+    env:
+    - name: KAFKA_BOOTSTRAP_SERVERS
+      value: light-es-kafka-bootstrap.eventstreams.svc:9092
+    - name: KAFKA_SSL_PROTOCOL
+      value: TLSv1.2
+    - name: KAFKA_SSL_TRUSTSTORE_LOCATION
+      value: /deployments/certs/server/ca.p12
+    - name: KAFKA_SSL_TRUSTSTORE_TYPE
+      value: PKCS12
+    - name: TRANSPORTATION_TOPIC
+      value: vaccine-transportation
+    image: quay.io/eclipse/che-quarkus:nightly
+    memoryLimit: 1512Mi
+    mountSources: true
+    volumeMounts:
+    - name: m2
+      path: /home/user/.m2
+- name: m2
+  volume:
+    size: 3Gi
+commands:
+- exec:
+    commandLine: mvn -Dmaven.repo.local=/home/user/.m2/repository compile
+    component: tools
+    workingDir: $PROJECTS_ROOT
+  id: init-compile
+- exec:
+    commandLine: mvn -Dmaven.repo.local=/home/user/.m2/repository quarkus:dev
+    component: tools
+    group:
+      isDefault: true
+      kind: run
+    workingDir: $PROJECTS_ROOT
+    hotReloadCapable: true
+  id: dev-run
+- exec:
+    commandLine: mvn -Dmaven.repo.local=/home/user/.m2/repository quarkus:dev -Ddebug=${DEBUG_PORT}
+    component: tools
+    group:
+      isDefault: true
+      kind: debug
+    workingDir: $PROJECTS_ROOT
+    hotReloadCapable: true
+  id: dev-debug
+events:
+  postStart:
+  - init-compile
