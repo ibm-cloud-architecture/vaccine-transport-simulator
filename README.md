@@ -1,14 +1,15 @@
-***Note: Original Source Code located here***    
-https://github.com/quarkusio/quarkus-quickstarts/tree/master/getting-started
+# Vaccine transportation simulator
 
-## Getting started with Quarkus
+This simulator is very simple, it defines a set of itineraries to move vaccine lots from one manufacturing plant to a target city. It offers data loaded from a file (see resources folder), and two APIs, one to get the current list of predefined transportation cost, and one POST to submit those records to the Kafka topic named: ``.
 
-This is a minimal CRUD service exposing a couple of endpoints over REST.
+The interesting parts of this code is to use Microprofile reactive messaging to product Kafka records with a key. The values coming from a list. The app exposes a OpenAPI user interface at: [http://127.0.0.1:8080/swagger-ui](http://127.0.0.1:8080/swagger-ui).
 
-Under the hood, this demo uses:
+The code was started with OpenShift DO CLI:
 
-- RESTEasy to expose the REST endpoints
-- REST-assured and JUnit 5 for endpoint testing
+```shell
+odo create --starter
+# then select the quarkus template
+```
 
 ## Requirements
 
@@ -38,16 +39,6 @@ live coding. To try this out:
 
 > ./mvnw quarkus:dev
 
-This command will leave Quarkus running in the foreground listening on port 8080.
-
-1. Visit the default endpoint: [http://127.0.0.1:8080](http://127.0.0.1:8080).
-    - Make a simple change to [src/main/resources/META-INF/resources/index.html](src/main/resources/META-INF/resources/index.html) file.
-    - Refresh the browser to see the updated page.
-2. Visit the `/hello` endpoint: [http://127.0.0.1:8080/hello](http://127.0.0.1:8080/hello)
-    - Update the response in [src/main/java/org/acme/quickstart/GreetingResource.java](src/main/java/org/acme/quickstart/GreetingResource.java). Replace `hello` with `hello there` in the `hello()` method.
-    - Refresh the browser. You should now see `hello there`.
-    - Undo the change, so the method returns `hello` again.
-    - Refresh the browser. You should now see `hello`.
 
 ### Run Quarkus in JVM mode
 
@@ -82,3 +73,16 @@ After getting a cup of coffee, you'll be able to run this executable directly:
 > ./target/getting-started-1.0-SNAPSHOT-runner
 
 
+## Deploy to OpenShift
+
+* Deploy the configuration via the config map:
+
+ ```shell
+ oc apply -f src/main/kubernetes/configmap.yaml
+ ```
+
+* Deploy the app using quarkus extension:
+
+ ```shell
+ mvn clean package -Dquarkus.kubernetes.deploy=true 
+ ```
