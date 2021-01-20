@@ -1,0 +1,20 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch Current File",
+            "request": "launch",
+            "mainClass": "${file}",
+            "env" : {
+                "BOOTSTRAP_SERVERS": "kafka:9092",
+                "TOPIC_NAME": "orders",
+                "KAFKA_USER": "",
+                "KAFKA_PASSWORD": ""
+            }
+        },
+    ]
+}

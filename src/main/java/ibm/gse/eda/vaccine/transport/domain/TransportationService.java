@@ -5,12 +5,11 @@ import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.eclipse.microprofile.reactive.messaging.Channel;
-import org.eclipse.microprofile.reactive.messaging.Emitter;
 import org.jboss.logging.Logger;
 
+import ibm.gse.eda.vaccine.orderoptimizer.Transportation;
+import ibm.gse.eda.vaccine.transport.infrastructure.TransportProducer;
 import ibm.gse.eda.vaccine.transport.infrastructure.TransportRepository;
-import io.smallrye.reactive.messaging.kafka.KafkaRecord;
 
 /**
  * As a demo the 
@@ -21,10 +20,16 @@ public class TransportationService {
 
     @Inject
     TransportRepository repository;
-    
+   
+    /*
+    Looks there is a problem to connect to schema registry with ssl with smallrye
     @Inject
     @Channel("transportations")
-    Emitter<TransportDefinition> emitter;
+    Emitter<Transportation> emitter;
+    */
+    // may be temporary
+    @Inject
+    TransportProducer producer;
     
     public TransportationService() {
  
@@ -42,8 +47,15 @@ public class TransportationService {
         logger.info("Start sending currentTransportDefinition");
         for (TransportDefinition item: getAllTransportDefinitions()) {
             logger.info("Send: " + item.lane_id);
-            KafkaRecord<String, TransportDefinition> record = KafkaRecord.of(item.lane_id,item);
-            emitter.send(record);
+            Transportation transportationEvent = new Transportation(item.lane_id,
+                item.from_loc,
+                item.to_loc,
+                item.transit_time,
+                item.reefer_cost,
+                item.fixed_cost);
+            producer.sendOneTransportationEvent(transportationEvent);
+            // KafkaRecord<String, Transportation> record = KafkaRecord.of(item.lane_id,transportationEvent);
+            //emitter.send(record);
         };
         
 	}

@@ -1,4 +1,5 @@
-
+.env
 .odo/env
 /target
 .odo/odo-file-index.json
+src/main/kubernetes/secret.yaml

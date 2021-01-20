@@ -30,15 +30,18 @@ for help setting up your environment.
 
 Launch the Maven build on the checked out sources of this demo:
 
+```shell
 > ./mvnw install
+```
 
 ### Live coding with Quarkus
 
 The Maven Quarkus plugin provides a development mode that supports
 live coding. To try this out:
 
+```shell
 > ./mvnw quarkus:dev
-
+```
 
 ### Run Quarkus in JVM mode
 
@@ -47,11 +50,15 @@ conventional jar file.
 
 First compile it:
 
+```shell
 > ./mvnw install
+```
 
 Then run it:
 
+```shell
 > java -jar ./target/getting-started-1.0-SNAPSHOT-runner.jar
+```
 
 Have a look at how fast it boots, or measure the total native memory consumption.
 
@@ -66,23 +73,27 @@ Compiling a native executable takes a bit longer, as GraalVM performs additional
 steps to remove unnecessary codepaths. Use the  `native` profile to compile a
 native executable:
 
+```shell
 > ./mvnw install -Dnative
+```
 
 After getting a cup of coffee, you'll be able to run this executable directly:
 
+```shell
 > ./target/getting-started-1.0-SNAPSHOT-runner
-
+```
 
 ## Deploy to OpenShift
 
-* Deploy the configuration via the config map:
+* Deploy the configuration via the config map and secret for schema registry URL:
 
  ```shell
  oc apply -f src/main/kubernetes/configmap.yaml
+ oc apply -f src/main/kubernetes/secret.yaml
  ```
 
 * Deploy the app using quarkus extension:
 
  ```shell
- mvn clean package -Dquarkus.kubernetes.deploy=true 
+ mvn clean generate-sources package -Dquarkus.kubernetes.deploy=true 
  ```

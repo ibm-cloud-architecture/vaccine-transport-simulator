@@ -22,6 +22,9 @@ public class TransportRepository {
     public TransportRepository() {
         super();
         InputStream is = getClass().getClassLoader().getResourceAsStream("transportations.json");
+        if (is == null) 
+            throw new IllegalAccessError("file not found for transportation");
+        System.out.println(is.toString());
         try {
             List<TransportDefinition> currentTransportationDefinitions = mapper.readValue(is, mapper.getTypeFactory().constructCollectionType(List.class, TransportDefinition.class));
             currentTransportationDefinitions.stream().forEach( (t) -> repo.put(t.lane_id,t));
