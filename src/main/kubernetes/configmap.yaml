@@ -2,15 +2,10 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: vaccine-transport-cm
-  namespace: vaccine
+  namespace: vaccine-solution
 data:
-  KAFKA_BOOTSTRAP_SERVERS: gse-eda-dev-kafka-bootstrap-eventstreams.gse-eda-2020-10-3-0143c5dd31acd8e030a1d6e0ab1380e3-0000.us-east.containers.appdomain.cloud:443
-  KAFKA_SSL_PROTOCOL: TLSv1.2
-  KAFKA_SSL_TRUSTSTORE_LOCATION: /deployments/certs/server/ca.p12
-  KAFKA_SSL_TRUSTSTORE_TYPE: PKCS12
-  TRANSPORTATION_TOPIC: vaccine-transportation
-  KAFKA_SASL_MECHANISM: SCRAM-SHA-512
-  KAFKA_SECURITY_PROTOCOL: SASL_SSL
-  KAFKA_USER: jesus-dev
+  KAFKA_CA_CERT_NAME: kafka-cluster-ca-cert
+  TRANSPORTATION_TOPIC: vaccine.transportation
+  KAFKA_USER: scram-user
 
  

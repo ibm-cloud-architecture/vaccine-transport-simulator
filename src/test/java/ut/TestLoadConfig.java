@@ -10,7 +10,7 @@ import io.quarkus.test.junit.QuarkusTest;
 @QuarkusTest
 public class TestLoadConfig {
     
-   // @Test
+   //@Test
     public void loadConfiguration(){
         TransportProducer producer = new TransportProducer();
         assertNotNull(producer);

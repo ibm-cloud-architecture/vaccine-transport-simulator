@@ -53,7 +53,7 @@ public class TransportationService {
                 item.transit_time,
                 item.reefer_cost,
                 item.fixed_cost);
-            producer.sendOneTransportationEvent(transportationEvent);
+            producer.sendOneTransportationEvent(item);
             // KafkaRecord<String, Transportation> record = KafkaRecord.of(item.lane_id,transportationEvent);
             //emitter.send(record);
         };

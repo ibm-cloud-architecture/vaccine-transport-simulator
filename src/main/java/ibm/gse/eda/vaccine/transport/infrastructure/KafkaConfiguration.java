@@ -20,6 +20,8 @@ public class KafkaConfiguration {
     private static final Logger logger = Logger.getLogger(KafkaConfiguration.class.getName());
 
     public  String mainTopicName = "products";
+    public  String schemaName = "Transportation";
+    public  String schemaVersion = "1.0.0";
     public  String truststoreLocation = "";
     public  String truststorePassword = "";
  
@@ -54,19 +56,19 @@ public class KafkaConfiguration {
         properties.put(SslConfigs.SSL_ENABLED_PROTOCOLS_CONFIG, "TLSv1.2");
         properties.put(SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, "HTTPS");
         
-        v = ConfigProvider.getConfig().getOptionalValue("kafka.ssl.trustore.location", String.class);
+        v = ConfigProvider.getConfig().getOptionalValue("kafka.ssl.truststore.location", String.class);
         if (v.isPresent()) {
             properties.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, v.get());
             truststoreLocation = v.get();
         }
 
-        v = ConfigProvider.getConfig().getOptionalValue("kafka.ssl.trustore.password", String.class);
+        v = ConfigProvider.getConfig().getOptionalValue("kafka.ssl.truststore.password", String.class);
         if (v.isPresent()) {
             properties.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, v.get());
             truststorePassword = v.get();
         }
 
-        v = ConfigProvider.getConfig().getOptionalValue("kafka.ssl.keystore.file.location", String.class);
+        v = ConfigProvider.getConfig().getOptionalValue("kafka.ssl.keystore.location", String.class);
         if (v.isPresent()) {
             properties.put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, v.get());
         }
@@ -124,6 +126,15 @@ public class KafkaConfiguration {
         } else {
             properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerialize");
         }
+        vs = ConfigProvider.getConfig().getOptionalValue("schema.name", String.class);
+        if (vs.isPresent()) {
+            schemaName=vs.get();
+        } 
+        vs = ConfigProvider.getConfig().getOptionalValue("schema.version", String.class);
+        if (vs.isPresent()) {
+            schemaVersion=vs.get();
+        } 
+        
      
         vs = ConfigProvider.getConfig().getOptionalValue("kafka.schema.registry.url", String.class);
         if (vs.isPresent()) {
@@ -131,8 +142,7 @@ public class KafkaConfiguration {
             properties.put(SchemaRegistryConfig.PROPERTY_API_SKIP_SSL_VALIDATION, true);
             properties.put("schema.registry.url",vs.get());
             properties.put("value.converter.schema.registry.url",vs.get());
-            properties.put(SchemaRegistryConfig.PROPERTY_API_URL, "https://gse-eda-dev-ibm-es-schema-external-eventstreams.gse-eda-2020-10-3-0143c5dd31acd8e030a1d6e0ab1380e3-0000.us-east.containers.appdomain.cloud");
-            properties.put(SchemaRegistryConfig.PROPERTY_API_SKIP_SSL_VALIDATION, true);
+           
             if (! truststoreLocation.isEmpty()) {
                 properties.put("value.converter.schema.registry.ssl.trutstore", truststoreLocation);
                 properties.put("value.converter.schema.registry.ssl.trutstore.password",truststorePassword);

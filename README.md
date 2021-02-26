@@ -1,8 +1,8 @@
 # Vaccine transportation simulator
 
-This simulator is very simple, it defines a set of itineraries to move vaccine lots from one manufacturing plant to a target city. It offers data loaded from a file (see resources folder), and two APIs, one to get the current list of predefined transportation cost, and one POST to submit those records to the Kafka topic named: ``.
+This simulator is very simple, it defines a set of itineraries to move vaccine lots from one manufacturing plant to a target city. It offers data loaded from a file (see resources folder), and two APIs, one to get the current list of predefined transportation cost, and one POST to submit those records to the Kafka topic named: `vaccine.transportation`.
 
-The interesting parts of this code is to use Microprofile reactive messaging to product Kafka records with a key. The values coming from a list. The app exposes a OpenAPI user interface at: [http://127.0.0.1:8080/swagger-ui](http://127.0.0.1:8080/swagger-ui).
+The interesting parts of this code is to use Microprofile reactive messaging to product Kafka records with a key. The values coming from a list. The app exposes a OpenAPI user interface at: [http://127.0.0.1:8080/q/swagger-ui](http://127.0.0.1:8080/swagger-ui).
 
 The code was started with OpenShift DO CLI:
 
@@ -26,62 +26,46 @@ been set, and that a JDK 1.8+ `java` command is on the path.
 See the [Building a Native Executable guide](https://quarkus.io/guides/building-native-image-guide)
 for help setting up your environment.
 
-## Building the application
+## Running the application in dev mode
 
-Launch the Maven build on the checked out sources of this demo:
-
-```shell
-> ./mvnw install
+You can run your application in dev mode that enables live coding using:
+```shell script
+./mvnw compile quarkus:dev
 ```
 
-### Live coding with Quarkus
+> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at http://localhost:8080/q/dev/.
 
-The Maven Quarkus plugin provides a development mode that supports
-live coding. To try this out:
+## Packaging and running the application
 
-```shell
-> ./mvnw quarkus:dev
+The application can be packaged using:
+```shell script
+./mvnw package
+```
+It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
+Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
+
+If you want to build an _über-jar_, execute the following command:
+```shell script
+./mvnw package -Dquarkus.package.type=uber-jar
 ```
 
-### Run Quarkus in JVM mode
+The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
 
-When you're done iterating in developer mode, you can run the application as a
-conventional jar file.
+## Creating a native executable
 
-First compile it:
-
-```shell
-> ./mvnw install
-```
-
-Then run it:
+You can create a native executable using: 
 
 ```shell
-> java -jar ./target/getting-started-1.0-SNAPSHOT-runner.jar
+./mvnw package -Pnative
 ```
 
-Have a look at how fast it boots, or measure the total native memory consumption.
-
-### Run Quarkus as a native executable
-
-You can also create a native executable from this application without making any
-source code changes. A native executable removes the dependency on the JVM:
-everything needed to run the application on the target platform is included in
-the executable, allowing the application to run with minimal resource overhead.
-
-Compiling a native executable takes a bit longer, as GraalVM performs additional
-steps to remove unnecessary codepaths. Use the  `native` profile to compile a
-native executable:
-
-```shell
-> ./mvnw install -Dnative
+Or, if you don't have GraalVM installed, you can run the native executable build in a container using: 
+```shell script
+./mvnw package -Pnative -Dquarkus.native.container-build=true
 ```
 
-After getting a cup of coffee, you'll be able to run this executable directly:
+You can then execute your native executable with: `./target/code-with-quarkus-1.0.0-SNAPSHOT-runner`
 
-```shell
-> ./target/getting-started-1.0-SNAPSHOT-runner
-```
 
 ## Deploy to OpenShift
 
@@ -97,3 +81,17 @@ After getting a cup of coffee, you'll be able to run this executable directly:
  ```shell
  mvn clean generate-sources package -Dquarkus.kubernetes.deploy=true 
  ```
+
+## Deploy the application with gitops
+
+The build generates a `target/kubernetes/openshift.yaml` that was modified to remove the triggers and put into a separate [gitops repository](https://github.com/ibm-cloud-architecture/vaccine-gitops). To use this gitops repository (and the apps/order-mgt), for any modified code, build the docker image and push to docker registry.
+
+```shell
+docker build -f src/main/docker/Dockerfile.jvm -t ibmcase/vaccine-transport-simulator:1.0.0 .
+docker push ibmcase/vaccine-transport-simulator:1.0.0
+```
+
+ ## Related guides
+
+- SmallRye OpenAPI ([guide](https://quarkus.io/guides/openapi-swaggerui)): Document your REST APIs with OpenAPI - comes with Swagger UI
+- RESTEasy JAX-RS ([guide](https://quarkus.io/guides/rest-json)): REST endpoint framework implementing JAX-RS and more

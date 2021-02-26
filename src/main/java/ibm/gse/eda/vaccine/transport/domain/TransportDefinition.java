@@ -6,9 +6,9 @@ public class TransportDefinition {
     public String lane_id;
     public String from_loc;
     public String to_loc;
-    public double transit_time;
-    public double fixed_cost;
-    public double reefer_cost;
+    public Double transit_time;
+    public Double fixed_cost;
+    public Double reefer_cost;
 
     public TransportDefinition(){}
 }
