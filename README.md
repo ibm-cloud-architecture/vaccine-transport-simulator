@@ -76,7 +76,7 @@ You can then execute your native executable with: `./target/code-with-quarkus-1.
  oc apply -f src/main/kubernetes/secret.yaml
  ```
 
-* Deploy the app using quarkus extension:
+* Deploy the app using Quarkus extension:
 
  ```shell
  mvn clean generate-sources package -Dquarkus.kubernetes.deploy=true 
